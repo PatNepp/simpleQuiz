@@ -21,7 +21,7 @@ const data = [
     },
     {
         id: 3,
-        question: "A 'Clowder' is a group of what species?",
+        question: "A 'Clowder' is a group of:",
         answers: [
             {answer: 'Crows', isCorrect: false},
             {answer: 'Snails', isCorrect: false},
@@ -58,16 +58,26 @@ const answersContainer = document.querySelector('.answers')
 const submit = document.querySelector('.submit')
 const play = document.querySelector('.play')
 
-console.log(answersContainer)
-
-
 let qIndex = 0
 let correctCount = 0
 let wrongCount = 0
-let total = 0
 let selectedAnswer
 
+const showResults = () => {
+    const total = correctCount * 10
+    resultScreen.style.display = 'block'
+    gameScreen.style.display = 'none'
+
+    resultScreen.querySelector('.correct').textContent = `Correct: ${correctCount}`
+    resultScreen.querySelector('.wrong').textContent = `Incorrect: ${wrongCount}`
+    resultScreen.querySelector('.score').textContent = `Score: ${(correctCount - wrongCount) * 10}`
+}
+
 const showQuestion = (qNum) => {
+    if (qIndex === data.length) {
+        return showResults()
+    }
+    selectedAnswer = null;
     question.textContent = data[qNum].question
     answersContainer.innerHTML = data[qNum].answers.map((item, i) => {
         return `
@@ -88,6 +98,32 @@ const selectAnswer = () => {
     })
 }
 
+const submitAnswer = () => {
+    submit.addEventListener('click', () => {
+        if (selectedAnswer !== null) {
+            selectedAnswer === 'true' ? correctCount++ : wrongCount++
+            qIndex++
+            showQuestion(qIndex)
+        } else {
+            alert('Select an answer!')
+        }
+    })    
+}
+
+const playAgain = () => {
+    qIndex = 0
+    correctCount = 0
+    wrongCount = 0
+    resultScreen.style.display = 'none'
+    gameScreen.style.display = 'block'
+    showQuestion(qIndex)
+}
+
+play.addEventListener('click', () => {
+    playAgain()
+})
+
 showQuestion(qIndex)
+submitAnswer()
 
 
